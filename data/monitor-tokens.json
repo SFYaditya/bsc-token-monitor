@@ -1,0 +1,46 @@
+{
+  "ecosystem": {
+    "usdt": "0x55d398326f99059fF775485246999027B3197955",
+    "router": "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+    "userHierarchy": "0x3ED53FEA75dD3c4Be40Eb48b84Bc3Ff86dEB7607",
+    "au": "0xCAB65560A5b4271D3Ca08d9DE14C5017495D14FB",
+    "stakingPool": "0xe52FFA097f58978ac05FF81Eee874eC5fD54D21c",
+    "vault": "0x519Be7d237a84DaE69072161Ca7234a6e2FD5A06",
+    "otc": "0xb638B034A6A4C8c855856FCdf686FAB03Af456C3",
+    "studio": "0xa1b897873545d8BE5c093b851C160DCdaE219675",
+    "academy": "0x6dc734ECB08319DE0e2426c40799441678CFA8df",
+    "minePool": "0x883c82F152Ba370D813aE42D2a70483B14626124",
+    "auUsdtPair": "0xd1459eA7c8C5dB50422Be962d43Bb350380EcfC1"
+  },
+  "projectAddresses": [
+    "0x519Be7d237a84DaE69072161Ca7234a6e2FD5A06",
+    "0xb638B034A6A4C8c855856FCdf686FAB03Af456C3",
+    "0xa1b897873545d8BE5c093b851C160DCdaE219675",
+    "0x6dc734ECB08319DE0e2426c40799441678CFA8df",
+    "0x883c82F152Ba370D813aE42D2a70483B14626124"
+  ],
+  "tokens": [
+    {
+      "name": "CAT",
+      "symbol": "CAT",
+      "tokenAddress": "0x0667873E07FFec6509525B4e4Cd97409e1fe9424",
+      "decimals": 18,
+      "pairAddress": "0x16aCe0BCb190FB62fAd68ECc26f428505E413B0B",
+      "lpStakingContractAddress": "0x0385A003784430DAdD7a46089Ac705dc1b5fc4f8",
+      "lpStakingPid": 0,
+      "lpStakingFromBlock": 100166000,
+      "quoteTokenAddress": "0x55d398326f99059fF775485246999027B3197955",
+      "quoteSymbol": "USDT",
+      "startBlock": 99037086,
+      "watchAddresses": [
+        "0x86938611641f2a44d93eb7b22f99505162e5bea5",
+        "0x7772c40c9d3e58f31bdb6a480d03b33ddfad8777",
+        "0xf8f2484627698f4f4f16d53f23477c8a731a4a6e"
+      ],
+      "alertLargeTradeUsd": 0,
+      "notifyBuyTelegram": true,
+      "notifySellTelegram": true,
+      "enabled": true
+    }
+  ]
+}

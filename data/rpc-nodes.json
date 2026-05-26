@@ -1,0 +1,53 @@
+{
+  "nodes": [
+    {
+      "id": "default-0",
+      "url": "wss://bsc.publicnode.com",
+      "label": "bsc.publicnode.com",
+      "enabled": true
+    },
+    {
+      "id": "default-1",
+      "url": "wss://bsc-rpc.publicnode.com",
+      "label": "bsc-rpc.publicnode.com",
+      "enabled": true
+    },
+    {
+      "id": "default-2",
+      "url": "https://bsc-dataseed.binance.org",
+      "label": "bsc-dataseed.binance.org",
+      "enabled": true
+    },
+    {
+      "id": "default-3",
+      "url": "https://bsc.publicnode.com",
+      "label": "bsc.publicnode.com",
+      "enabled": true
+    },
+    {
+      "id": "default-4",
+      "url": "https://bsc-dataseed1.binance.org",
+      "label": "bsc-dataseed1.binance.org",
+      "enabled": true
+    },
+    {
+      "id": "default-5",
+      "url": "https://bsc-dataseed2.binance.org",
+      "label": "bsc-dataseed2.binance.org",
+      "enabled": true
+    },
+    {
+      "id": "default-6",
+      "url": "https://bsc.api.pocket.network",
+      "label": "bsc.api.pocket.network",
+      "enabled": true
+    },
+    {
+      "id": "default-7",
+      "url": "https://rpc-bsc.48.club",
+      "label": "rpc-bsc.48.club",
+      "enabled": true
+    }
+  ],
+  "activeUrl": "wss://bsc-rpc.publicnode.com"
+}

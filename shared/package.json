@@ -1,0 +1,31 @@
+{
+  "name": "@token-monitor/shared",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "node scripts/clean-dist.mjs dist && tsc",
+    "lint:unused": "tsc --noEmit",
+    "dev": "tsc --watch --preserveWatchOutput"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "dotenv": "^16.4.7",
+    "ethers": "^6.13.5",
+    "ioredis": "^5.6.1",
+    "pg": "^8.14.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.12",
+    "@types/pg": "^8.11.11",
+    "typescript": "^5.8.2"
+  }
+}

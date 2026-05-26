@@ -1,0 +1,166 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: monitor
+      POSTGRES_PASSWORD: monitor
+      POSTGRES_DB: token_monitor
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U monitor -d token_monitor']
+      interval: 3s
+      timeout: 5s
+      retries: 15
+      start_period: 10s
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    env_file: .env
+    environment:
+      REDIS_URL: redis://redis:6379
+      DATABASE_URL: postgresql://monitor:monitor@postgres:5432/token_monitor
+      ALERT_ASYNC: 'true'
+    volumes:
+      - ./data/monitor-tokens.json:/app/data/monitor-tokens.json:ro
+    expose:
+      - '3001'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'node -e "fetch(''http://127.0.0.1:3001/api/v1/health'').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 8
+      start_period: 20s
+    restart: unless-stopped
+
+  chain-listener:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.chain-listener
+    env_file: .env
+    environment:
+      REDIS_URL: redis://redis:6379
+      DATABASE_URL: postgresql://monitor:monitor@postgres:5432/token_monitor
+      FAST_PAIR_INTERVAL_ACTIVE: '1'
+      FAST_PAIR_INTERVAL_QUIET: '2'
+      MEDIUM_MC_INTERVAL_ACTIVE: '10'
+      MEDIUM_MC_INTERVAL_QUIET: '20'
+      SLOW_TRANSFER_INTERVAL_ACTIVE: '25'
+      SLOW_TRANSFER_INTERVAL_QUIET: '25'
+      SYNC_GETLOGS_MAX_BLOCK_RANGE: '25'
+      SYNC_GETLOGS_MIN_INTERVAL_MS: '550'
+      LISTENER_MAX_SCANS_PER_POLL: '8'
+      SYNC_TARGET_MAX_LAG_BLOCKS: '20'
+      SYNC_CATCHUP_LAG_BLOCKS: '20'
+      SYNC_CATCHUP_CHUNK_BLOCKS: '25'
+      SYNC_CATCHUP_MAX_SCANS_PER_POLL: '30'
+      SYNC_DEEP_LAG_BLOCKS: '500'
+      SYNC_DEEP_CATCHUP_MAX_SCANS_PER_POLL: '45'
+      SYNC_BURST_POLL_MAX_MS: '35000'
+      SYNC_DEEP_LAG_SLOW_MAX_SCANS: '6'
+      LISTENER_POLL_FAST_MS: '1200'
+      MARKET_RESERVES_CALIBRATE_MS: '180000'
+      HOLDER_SKIP_BALANCEOF_ON_EVENT: 'true'
+      LISTENER_ENABLE_WSS_EVENTS: 'false'
+      ENABLE_MASTER_CHEF_LISTENER: 'false'
+      ENABLE_AU_STAKING_LISTENER: 'false'
+      ENABLE_CAT_FARM_LISTENER: 'false'
+      ENABLE_TOKEN_TRANSFER_LISTENER: 'true'
+      BSC_RPC_HEALTH_CHECK_INTERVAL_MS: '60000'
+      BSC_RPC_MAX_LATENCY_MS: '2000'
+      SYNC_CONFIRM_BLOCKS: '1'
+      SYNC_MAX_RETRIES: '3'
+      LISTENER_POLL_MS: '4000'
+      LISTENER_LAG_ALERT_BLOCKS: '120'
+      LISTENER_HEARTBEAT_MS: '10000'
+      LISTENER_STALE_HEARTBEAT_MS: '180000'
+      LISTENER_HEALTH_CHECK_MS: '60000'
+      BSCSCAN_HOLDER_PAGES: '10'
+      ALERT_ASYNC: 'true'
+    volumes:
+      - ./data/monitor-tokens.json:/app/data/monitor-tokens.json:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  event-processor:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.event-processor
+    env_file: .env
+    environment:
+      REALTIME_BROADCAST_URL: http://api:3001/api/v1/internal/realtime
+      REDIS_URL: redis://redis:6379
+      DATABASE_URL: postgresql://monitor:monitor@postgres:5432/token_monitor
+      ALERT_ASYNC: 'true'
+      EVENT_PROCESSOR_POLL_MS: '2000'
+      HOLDER_CALIBRATE_POLL_MS: '60000'
+      DATA_MAINTENANCE_MS: '300000'
+      DATA_MAINTENANCE_FULL_MS: '21600000'
+      RAW_EVENT_CONCURRENCY: '6'
+      RAW_EVENT_BATCH_LIMIT: '300'
+      HOLDER_CALIBRATE_BACKLOG_THRESHOLD: '400'
+      LP_STAKING_STAT_RECONCILE_MS: '120000'
+      LP_STAKE_LOG_CHUNK_BLOCKS: '25'
+      ENABLE_MASTER_CHEF_LISTENER: 'false'
+      ENABLE_AU_STAKING_LISTENER: 'false'
+      ENABLE_CAT_FARM_LISTENER: 'false'
+      RAW_EVENT_MAX_RETRIES: '5'
+      WS_PRICE_UPDATE_MIN_MS: '2000'
+      WS_HOLDER_UPDATE_MIN_MS: '1500'
+    volumes:
+      - ./data/monitor-tokens.json:/app/data/monitor-tokens.json:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  alert-worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.alert-worker
+    env_file: .env
+    environment:
+      REDIS_URL: redis://redis:6379
+      DATABASE_URL: postgresql://monitor:monitor@postgres:5432/token_monitor
+      ALERT_ASYNC: 'true'
+      ALERT_WORKER_POLL_MS: '3000'
+    volumes:
+      - ./data/monitor-tokens.json:/app/data/monitor-tokens.json:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.web
+    ports:
+      - '${WEB_PORT:-8080}:80'
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  pgdata:

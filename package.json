@@ -1,0 +1,25 @@
+{
+  "name": "bsc-token-monitor",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "shared",
+    "backend",
+    "chain-listener",
+    "event-processor",
+    "alert-worker",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n shared,api,listener,processor,alerts,web -c gray,blue,cyan,magenta,yellow,green \"npm run dev -w @token-monitor/shared\" \"npm run dev -w @token-monitor/backend\" \"npm run dev -w @token-monitor/chain-listener\" \"npm run dev -w @token-monitor/event-processor\" \"npm run dev -w @token-monitor/alert-worker\" \"npm run dev -w @token-monitor/frontend\"",
+    "build": "npm run build -w @token-monitor/shared && npm run build -w @token-monitor/backend && npm run build -w @token-monitor/chain-listener && npm run build -w @token-monitor/event-processor && npm run build -w @token-monitor/alert-worker && npm run build -w @token-monitor/frontend",
+    "lint:unused": "npm run lint:unused -w @token-monitor/shared && npm run lint:unused -w @token-monitor/frontend",
+    "knip": "knip",
+    "ci": "npm run lint:unused && npm run knip && npm run build",
+    "migrate:pg": "node scripts/migrate-sqlite-to-pg.mjs"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "knip": "^5.46.5"
+  }
+}
